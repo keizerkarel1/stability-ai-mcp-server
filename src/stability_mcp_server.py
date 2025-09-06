@@ -378,5 +378,10 @@ async def main():
         )
 
 
-if __name__ == "__main__":
+def main_sync():
+    """Synchronous entry point for pip-installed console script."""
     asyncio.run(main())
+
+
+if __name__ == "__main__":
+    main_sync()

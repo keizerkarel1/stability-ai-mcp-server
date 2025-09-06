@@ -39,7 +39,7 @@ Issues = "https://github.com/your-username/stability-ai-mcp-server/issues"
 Documentation = "https://github.com/your-username/stability-ai-mcp-server#readme"
 
 [project.scripts]
-stability-mcp-server = "src.stability_mcp_server:main"
+stability-mcp-server = "src.stability_mcp_server:main_sync"
 
 [tool.setuptools.packages.find]
 where = ["."]

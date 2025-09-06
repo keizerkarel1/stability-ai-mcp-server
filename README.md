@@ -1,7 +1,6 @@
 # Note
 Everything below is AI. This whole tool is vibecoded too quickly based on https://github.com/tadasant/mcp-server-stability-ai and the official Google colab python project. It seemed to work for me, your mileage may vary.
 
-
 # Stability AI MCP Server
 
 A [Model Context Protocol](https://modelcontextprotocol.io/) server for Stability AI image generation. This is an updated Python implementation that extends the original work by [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) with support for the newer Core and Ultra models.
@@ -35,21 +34,43 @@ This project builds upon the excellent foundation laid by [@tadasant's original 
 
 ## Installation
 
-1. Clone this repository:
+### Option 1: Direct Install (Recommended)
+
+1. Install directly from GitHub:
 ```bash
-git clone <repository-url>
-cd stability-ai-mcp-server
+pip install git+https://github.com/keizerkarel1/stability-ai-mcp-server.git
 ```
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Configure Claude Desktop by editing the configuration file:
+2. Configure Claude Desktop:
    - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
    - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
+```json
+{
+  "mcpServers": {
+    "stability-ai": {
+      "command": "stability-mcp-server",
+      "env": {
+        "STABILITY_API_KEY": "your-stability-api-key-here",
+        "IMAGE_STORAGE_PATH": "/Users/yourusername/Pictures/StabilityAI"
+      }
+    }
+  }
+}
+```
+
+3. Restart Claude Desktop.
+
+### Option 2: Manual Install
+
+1. Clone and install:
+```bash
+git clone https://github.com/keizerkarel1/stability-ai-mcp-server.git
+cd stability-ai-mcp-server
+pip install -r requirements.txt
+```
+
+2. Configure Claude Desktop with full path:
 ```json
 {
   "mcpServers": {
@@ -64,8 +85,6 @@ pip install -r requirements.txt
   }
 }
 ```
-
-4. Restart Claude Desktop to load the configuration.
 
 ## Configuration
 
