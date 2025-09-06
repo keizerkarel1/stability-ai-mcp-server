@@ -1,9 +1,6 @@
-# Note
-Everything below is AI. This whole tool is vibecoded too quickly based on https://github.com/tadasant/mcp-server-stability-ai and the official Google colab python project. It seemed to work for me, your mileage may vary.
-
 # Stability AI MCP Server
 
-A [Model Context Protocol](https://modelcontextprotocol.io/) server for Stability AI image generation. This is an updated Python implementation that extends the original work by [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) with support for the newer Core and Ultra models.
+A [Model Context Protocol](https://modelcontextprotocol.io/) server for Stability AI image generation. This Python implementation extends the original work by [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) with support for the newer Core and Ultra models, plus **inline image display** in Claude.
 
 ## Credit
 
@@ -11,6 +8,7 @@ This project builds upon the excellent foundation laid by [@tadasant's original 
 
 - Support for the new `stable-image-core` and `stable-image-ultra` endpoints
 - Updated SD3.5 model support
+- **Inline image display** - images appear directly in Claude chat instead of just file paths
 - Python-based implementation for easier community contribution
 - Enhanced error handling and validation
 
@@ -34,17 +32,35 @@ This project builds upon the excellent foundation laid by [@tadasant's original 
 
 ## Installation
 
-### Option 1: Direct Install (Recommended)
+Install directly from GitHub:
 
-1. Install directly from GitHub:
 ```bash
 pip install git+https://github.com/keizerkarel1/stability-ai-mcp-server.git
 ```
 
-2. Configure Claude Desktop:
-   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+## Configuration
 
+Add to your Claude Desktop configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`  
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+### Windows Configuration:
+```json
+{
+  "mcpServers": {
+    "stability-ai": {
+      "command": "C:\\Users\\yourusername\\AppData\\Roaming\\Python\\Python311\\Scripts\\stability-mcp-server.exe",
+      "env": {
+        "STABILITY_API_KEY": "your-stability-api-key-here",
+        "IMAGE_STORAGE_PATH": "C:\\Users\\yourusername\\Pictures\\StabilityAI"
+      }
+    }
+  }
+}
+```
+
+### macOS Configuration:
 ```json
 {
   "mcpServers": {
@@ -59,47 +75,15 @@ pip install git+https://github.com/keizerkarel1/stability-ai-mcp-server.git
 }
 ```
 
-3. Restart Claude Desktop.
-
-### Option 2: Manual Install
-
-1. Clone and install:
-```bash
-git clone https://github.com/keizerkarel1/stability-ai-mcp-server.git
-cd stability-ai-mcp-server
-pip install -r requirements.txt
-```
-
-2. Configure Claude Desktop with full path:
-```json
-{
-  "mcpServers": {
-    "stability-ai": {
-      "command": "python",
-      "args": ["/absolute/path/to/stability-ai-mcp-server/src/stability_mcp_server.py"],
-      "env": {
-        "STABILITY_API_KEY": "your-stability-api-key-here",
-        "IMAGE_STORAGE_PATH": "/Users/yourusername/Pictures/StabilityAI"
-      }
-    }
-  }
-}
-```
-
-## Configuration
-
 **Required:**
 - `STABILITY_API_KEY`: Your Stability AI API key
 
 **Optional:**
-- `IMAGE_STORAGE_PATH`: Directory for saving generated images
-  - If not set, uses `./images/` in the project directory
-  - Supports absolute paths, relative paths, and `~` expansion
-  - Examples: `/Users/username/Pictures/AI`, `~/Pictures/AI`, `C:\Users\Name\Pictures\AI`
+- `IMAGE_STORAGE_PATH`: Directory for saving generated images (defaults to `./images/`)
+
+Restart Claude Desktop after configuration.
 
 ## Usage
-
-For comprehensive usage examples and patterns, refer to [@tadasant's original documentation](https://github.com/tadasant/mcp-server-stability-ai). Basic usage:
 
 **Text-to-image:**
 ```
@@ -115,6 +99,8 @@ Generate a cityscape using sd3.5-large model
 ```
 Transform this image: /path/to/image.jpg into a watercolor style
 ```
+
+Images will display inline in Claude and also be saved to your configured storage path.
 
 ## Tools
 
@@ -158,16 +144,6 @@ Metadata includes generation parameters, file info, and API response details.
 **sd3.5-medium**: Balanced performance and cost.
 
 **sd3.5-flash**: Fastest generation. Good for quick previews and iteration.
-
-## Troubleshooting
-
-**"STABILITY_API_KEY not found"**: Check your API key in Claude Desktop configuration.
-
-**"Storage directory error"**: Verify the `IMAGE_STORAGE_PATH` exists and is writable.
-
-**"Content filtered"**: Try a different prompt or add negative prompts.
-
-**"Insufficient credits"**: Check your account balance at platform.stability.ai.
 
 ## Contributing
 

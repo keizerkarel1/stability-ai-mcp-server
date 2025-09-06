@@ -7,10 +7,11 @@ Supports SD3.5 family, Stable Image Core, and Stable Image Ultra.
 """
 
 import asyncio
+import base64
 import logging
 import os
 import sys
-from typing import Optional
+from typing import Optional, Union
 
 # Configure logging to stderr (MCP requirement)
 logging.basicConfig(
@@ -23,7 +24,7 @@ logger = logging.getLogger(__name__)
 try:
     from mcp.server import Server
     from mcp.server.stdio import stdio_server
-    from mcp.types import Tool, TextContent
+    from mcp.types import Tool, TextContent, ImageContent
 except ImportError as e:
     logger.error(f"Missing MCP dependencies: {e}")
     logger.error("Please install: pip install mcp")
@@ -136,7 +137,7 @@ async def list_tools() -> list[Tool]:
 
 
 @app.call_tool()
-async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+async def call_tool(name: str, arguments: dict) -> list[Union[TextContent, ImageContent]]:
     """Handle tool calls."""
     
     if name == "generate_image":
@@ -152,7 +153,7 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         raise ValueError(f"Unknown tool: {name}")
 
 
-async def handle_generate_image(arguments: dict) -> list[TextContent]:
+async def handle_generate_image(arguments: dict) -> list[Union[TextContent, ImageContent]]:
     """Handle image generation requests."""
     try:
         # Extract parameters with defaults
@@ -218,7 +219,11 @@ async def handle_generate_image(arguments: dict) -> list[TextContent]:
             metadata["input_image_path"] = image_path
             metadata["strength"] = strength
         
-        # Save image and metadata
+        # Convert image data to base64 for inline display
+        base64_data = base64.b64encode(result.image_data).decode()
+        mime_type = f"image/{output_format.lower()}"
+        
+        # Save image and metadata to disk
         try:
             image_file_path, metadata_file_path = save_image_with_metadata(
                 result.image_data, 
@@ -232,16 +237,38 @@ async def handle_generate_image(arguments: dict) -> list[TextContent]:
                 f"**Seed:** {result.seed}\n" 
                 f"**Format:** {output_format}\n"
                 f"**File:** {image_file_path}\n\n"
-                f"The image has been saved and can be opened from the file path above."
+                f"The image is displayed above and saved to the file path for future reference."
             )
             
-            return [TextContent(type="text", text=success_message)]
+            # Return both image content (for inline display) and text content (for metadata)
+            return [
+                ImageContent(
+                    type="image",
+                    data=base64_data,
+                    mimeType=mime_type
+                ),
+                TextContent(type="text", text=success_message)
+            ]
             
         except StorageError as e:
-            return [TextContent(
-                type="text", 
-                text=f"❌ Image generated but failed to save: {e}"
-            )]
+            # Still return the image even if saving failed
+            error_message = (
+                f"⚠️ Image generated successfully but failed to save to disk: {e}\n\n"
+                f"**Model:** {model}\n"
+                f"**Type:** {'Image-to-image' if image_path else 'Text-to-image'}\n"
+                f"**Seed:** {result.seed}\n" 
+                f"**Format:** {output_format}\n\n"
+                f"The image is displayed above but could not be saved to file."
+            )
+            
+            return [
+                ImageContent(
+                    type="image",
+                    data=base64_data,
+                    mimeType=mime_type
+                ),
+                TextContent(type="text", text=error_message)
+            ]
     
     except StabilityAPIError as e:
         logger.error(f"Stability API error: {e.message}")
