@@ -1,3 +1,7 @@
+#Note
+Everything below is AI. This whole tool is vibecoded too quickly based on https://github.com/tadasant/mcp-server-stability-ai and the official Google colab python project. It seemed to work for me, your mileage may vary.
+
+
 # Stability AI MCP Server
 
 A [Model Context Protocol](https://modelcontextprotocol.io/) server for Stability AI image generation. This is an updated Python implementation that extends the original work by [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) with support for the newer Core and Ultra models.
