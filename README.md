@@ -1,6 +1,6 @@
 # A note
 Everything below is AI and was vibecoded way too quickly because I found out noone had made it and I needed images now.
-It works for me, your mileage may vary. I may actually work on this someday. You may want to tell your Claude to actually use Core as a default to save ai credits, because it tended to interpret all of my requests as needing ultra initially.
+It works for me, your mileage may vary. I may actually work on this someday. You can ask claude how this works after you install it if you want.
 
 ## Stability AI MCP Server
 
@@ -166,4 +166,5 @@ Open source. See LICENSE file for details.
 - [Model Context Protocol](https://modelcontextprotocol.io/) team
 
 - [Anthropic](https://anthropic.com/) for Claude Desktop
+
 
