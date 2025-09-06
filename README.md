@@ -35,7 +35,7 @@ This project builds upon the excellent foundation laid by [@tadasant's original 
 Install directly from GitHub:
 
 ```bash
-pip install git+https://github.com/keizerkarel1/stability-ai-mcp-server.git
+pip install git+https://github.com/keizerkarel1/stability-ai-mcp-server
 ```
 
 ## Configuration
@@ -158,4 +158,5 @@ Open source. See LICENSE file for details.
 - [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) for the original MCP server implementation
 - [Stability AI](https://stability.ai/) for the image generation APIs
 - [Model Context Protocol](https://modelcontextprotocol.io/) team
+
 - [Anthropic](https://anthropic.com/) for Claude Desktop
