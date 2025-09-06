@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stability-ai-mcp-server"
+version = "1.0.0"
+description = "Model Context Protocol server for Stability AI image generation"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Stability AI MCP Contributors"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Multimedia :: Graphics",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.2.0",
+    "httpx>=0.25.0",
+    "Pillow>=10.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-username/stability-ai-mcp-server"
+Repository = "https://github.com/your-username/stability-ai-mcp-server.git"
+Issues = "https://github.com/your-username/stability-ai-mcp-server/issues"
+Documentation = "https://github.com/your-username/stability-ai-mcp-server#readme"
+
+[project.scripts]
+stability-mcp-server = "src.stability_mcp_server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md", "*.txt", "*.toml"]
