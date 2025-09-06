@@ -1,4 +1,4 @@
-#Note
+# Note
 Everything below is AI. This whole tool is vibecoded too quickly based on https://github.com/tadasant/mcp-server-stability-ai and the official Google colab python project. It seemed to work for me, your mileage may vary.
 
 
