@@ -1,6 +1,6 @@
 # Stability AI MCP Server
 
-A [Model Context Protocol](https://modelcontextprotocol.io/) server for Stability AI image generation. This Python implementation extends the original work by [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) with support for the newer Core and Ultra models, plus **inline image display** in Claude.
+A [Model Context Protocol](https://modelcontextprotocol.io/) server for Stability AI image generation. This Python implementation extends the original work by [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) with support for the newer Core and Ultra models, plus **automatic image preview** via system viewer.
 
 ## Credit
 
@@ -8,7 +8,8 @@ This project builds upon the excellent foundation laid by [@tadasant's original 
 
 - Support for the new `stable-image-core` and `stable-image-ultra` endpoints
 - Updated SD3.5 model support
-- **Inline image display** - images appear directly in Claude chat instead of just file paths
+- **Automatic image preview** - images open automatically in your system's default image viewer
+- **Organized file structure** - metadata saved in separate `/metadata` subfolder
 - Python-based implementation for easier community contribution
 - Enhanced error handling and validation
 
@@ -35,7 +36,7 @@ This project builds upon the excellent foundation laid by [@tadasant's original 
 Install directly from GitHub:
 
 ```bash
-pip install --user git+https://github.com/keizerkarel1/stability-ai-mcp-server
+pip install git+https://github.com/keizerkarel1/stability-ai-mcp-server.git
 ```
 
 ## Configuration
@@ -100,7 +101,7 @@ Generate a cityscape using sd3.5-large model
 Transform this image: /path/to/image.jpg into a watercolor style
 ```
 
-Images will display inline in Claude and also be saved to your configured storage path.
+Images will automatically open in your system's default image viewer and be saved to your configured storage path.
 
 ## Tools
 
@@ -123,15 +124,16 @@ Returns storage directory information and statistics.
 
 ## File Storage
 
-Images are automatically saved with timestamps and metadata:
+Images are automatically saved with organized file structure:
 
 ```
 /your/storage/path/
 ├── stability_20250106_143022_12345.png
-├── stability_20250106_143022_12345_metadata.json
+└── metadata/
+    └── stability_20250106_143022_12345_metadata.json
 ```
 
-Metadata includes generation parameters, file info, and API response details.
+Metadata files are saved in a separate `metadata` subfolder and include generation parameters, file info, and API response details.
 
 ## Model Selection
 
@@ -158,6 +160,4 @@ Open source. See LICENSE file for details.
 - [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) for the original MCP server implementation
 - [Stability AI](https://stability.ai/) for the image generation APIs
 - [Model Context Protocol](https://modelcontextprotocol.io/) team
-
 - [Anthropic](https://anthropic.com/) for Claude Desktop
-

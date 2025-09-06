@@ -123,9 +123,13 @@ def save_image_with_metadata(
         with open(image_path, 'wb') as f:
             f.write(image_data)
         
-        # Save metadata
+        # Create metadata subdirectory if it doesn't exist
+        metadata_dir = storage_path / "metadata"
+        metadata_dir.mkdir(exist_ok=True)
+        
+        # Save metadata in the metadata subfolder
         metadata_filename = f"{image_path.stem}_metadata.json"
-        metadata_path = storage_path / metadata_filename
+        metadata_path = metadata_dir / metadata_filename
         
         # Add file info to metadata
         enhanced_metadata = {
@@ -302,6 +306,7 @@ def get_storage_stats() -> Dict:
         image_files = 0
         metadata_files = 0
         
+        # Count files in main directory
         for file_path in storage_path.iterdir():
             if file_path.is_file():
                 total_files += 1
@@ -309,8 +314,17 @@ def get_storage_stats() -> Dict:
                 
                 if file_path.suffix.lower() in ['.png', '.jpg', '.jpeg']:
                     image_files += 1
-                elif file_path.suffix.lower() == '.json':
-                    metadata_files += 1
+        
+        # Count metadata files in metadata subdirectory
+        metadata_dir = storage_path / "metadata"
+        if metadata_dir.exists() and metadata_dir.is_dir():
+            for file_path in metadata_dir.iterdir():
+                if file_path.is_file():
+                    total_files += 1
+                    total_size += file_path.stat().st_size
+                    
+                    if file_path.suffix.lower() == '.json':
+                        metadata_files += 1
         
         return {
             "storage_path": str(storage_path),

@@ -7,11 +7,12 @@ Supports SD3.5 family, Stable Image Core, and Stable Image Ultra.
 """
 
 import asyncio
-import base64
 import logging
 import os
+import platform
+import subprocess
 import sys
-from typing import Optional, Union
+from typing import Optional
 
 # Configure logging to stderr (MCP requirement)
 logging.basicConfig(
@@ -24,7 +25,7 @@ logger = logging.getLogger(__name__)
 try:
     from mcp.server import Server
     from mcp.server.stdio import stdio_server
-    from mcp.types import Tool, TextContent, ImageContent
+    from mcp.types import Tool, TextContent
 except ImportError as e:
     logger.error(f"Missing MCP dependencies: {e}")
     logger.error("Please install: pip install mcp")
@@ -42,6 +43,25 @@ from .models import (
 )
 from .stability_client import StabilityClient, StabilityAPIError, generate_image
 from .utils import save_image_with_metadata, get_storage_stats, StorageError
+
+
+def open_image_with_system_viewer(image_path: str) -> bool:
+    """Open image with system default viewer."""
+    try:
+        system = platform.system()
+        if system == "Windows":
+            os.startfile(image_path)
+        elif system == "Darwin":  # macOS
+            subprocess.run(["open", image_path], check=True)
+        elif system == "Linux":
+            subprocess.run(["xdg-open", image_path], check=True)
+        else:
+            logger.warning(f"Unknown system {system}, cannot open image viewer")
+            return False
+        return True
+    except Exception as e:
+        logger.error(f"Failed to open image viewer: {e}")
+        return False
 
 
 # Initialize MCP server
@@ -137,7 +157,7 @@ async def list_tools() -> list[Tool]:
 
 
 @app.call_tool()
-async def call_tool(name: str, arguments: dict) -> list[Union[TextContent, ImageContent]]:
+async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     """Handle tool calls."""
     
     if name == "generate_image":
@@ -153,7 +173,7 @@ async def call_tool(name: str, arguments: dict) -> list[Union[TextContent, Image
         raise ValueError(f"Unknown tool: {name}")
 
 
-async def handle_generate_image(arguments: dict) -> list[Union[TextContent, ImageContent]]:
+async def handle_generate_image(arguments: dict) -> list[TextContent]:
     """Handle image generation requests."""
     try:
         # Extract parameters with defaults
@@ -219,10 +239,6 @@ async def handle_generate_image(arguments: dict) -> list[Union[TextContent, Imag
             metadata["input_image_path"] = image_path
             metadata["strength"] = strength
         
-        # Convert image data to base64 for inline display
-        base64_data = base64.b64encode(result.image_data).decode()
-        mime_type = f"image/{output_format.lower()}"
-        
         # Save image and metadata to disk
         try:
             image_file_path, metadata_file_path = save_image_with_metadata(
@@ -230,45 +246,28 @@ async def handle_generate_image(arguments: dict) -> list[Union[TextContent, Imag
                 metadata
             )
             
+            # Try to open the image with system viewer
+            viewer_opened = open_image_with_system_viewer(image_file_path)
+            viewer_status = "🖼️ Opened in system image viewer" if viewer_opened else "📁 Saved to disk"
+            
             success_message = (
                 f"✅ Image generated successfully!\n\n"
                 f"**Model:** {model}\n"
                 f"**Type:** {'Image-to-image' if image_path else 'Text-to-image'}\n"
                 f"**Seed:** {result.seed}\n" 
                 f"**Format:** {output_format}\n"
-                f"**File:** {image_file_path}\n\n"
-                f"The image is displayed above and saved to the file path for future reference."
+                f"**File:** {image_file_path}\n"
+                f"**Status:** {viewer_status}\n\n"
+                f"The image has been saved and should open automatically in your default image viewer."
             )
             
-            # Return both image content (for inline display) and text content (for metadata)
-            return [
-                ImageContent(
-                    type="image",
-                    data=base64_data,
-                    mimeType=mime_type
-                ),
-                TextContent(type="text", text=success_message)
-            ]
+            return [TextContent(type="text", text=success_message)]
             
         except StorageError as e:
-            # Still return the image even if saving failed
-            error_message = (
-                f"⚠️ Image generated successfully but failed to save to disk: {e}\n\n"
-                f"**Model:** {model}\n"
-                f"**Type:** {'Image-to-image' if image_path else 'Text-to-image'}\n"
-                f"**Seed:** {result.seed}\n" 
-                f"**Format:** {output_format}\n\n"
-                f"The image is displayed above but could not be saved to file."
-            )
-            
-            return [
-                ImageContent(
-                    type="image",
-                    data=base64_data,
-                    mimeType=mime_type
-                ),
-                TextContent(type="text", text=error_message)
-            ]
+            return [TextContent(
+                type="text", 
+                text=f"❌ Image generated but failed to save: {e}"
+            )]
     
     except StabilityAPIError as e:
         logger.error(f"Stability API error: {e.message}")
