@@ -1,4 +1,8 @@
-# Stability AI MCP Server
+# A note
+Everything below is AI and was vibecoded way too quickly because I found out noone had made it and I needed images now.
+It works for me, your mileage may vary. I may actually work on this someday. You may want to tell your Claude to actually use Core as a default to save ai credits, because it tended to interpret all of my requests as needing ultra initially.
+
+## Stability AI MCP Server
 
 A [Model Context Protocol](https://modelcontextprotocol.io/) server for Stability AI image generation. This Python implementation extends the original work by [@tadasant](https://github.com/tadasant/mcp-server-stability-ai) with support for the newer Core and Ultra models, plus **automatic image preview** via system viewer.
 
@@ -162,3 +166,4 @@ Open source. See LICENSE file for details.
 - [Model Context Protocol](https://modelcontextprotocol.io/) team
 
 - [Anthropic](https://anthropic.com/) for Claude Desktop
+
