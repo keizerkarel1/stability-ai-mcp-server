@@ -35,7 +35,7 @@ This project builds upon the excellent foundation laid by [@tadasant's original 
 Install directly from GitHub:
 
 ```bash
-pip install git+https://github.com/keizerkarel1/stability-ai-mcp-server
+pip install --user git+https://github.com/keizerkarel1/stability-ai-mcp-server
 ```
 
 ## Configuration
@@ -160,3 +160,4 @@ Open source. See LICENSE file for details.
 - [Model Context Protocol](https://modelcontextprotocol.io/) team
 
 - [Anthropic](https://anthropic.com/) for Claude Desktop
+
